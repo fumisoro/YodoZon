@@ -10,7 +10,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.util.Log;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import android.os.StrictMode;
 
 public class MainActivity extends ActionBarActivity {
     private WebView varWebView, varWebView2;
@@ -39,6 +45,35 @@ public class MainActivity extends ActionBarActivity {
                 query = editText.getText().toString();
                 varWebView.loadUrl(String.format("http://www.yodobashi.com/ec/category/index.html?cate=&word=%s&gint=\"\"", query));
                 varWebView2.loadUrl(String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", query));
+
+                //追加分　ここから
+                try {
+                    StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
+                    String TagetUrl = String.format("http://www.yodobashi.com/ec/category/index.html?cate=&word=%s&gint=\"\"", query);
+                    String strLine;
+                    URL url = new URL(TagetUrl);
+                    Object content = url.getContent();
+                    if (content instanceof InputStream) {
+                        BufferedReader bf = new BufferedReader(new InputStreamReader
+                                ((InputStream)content,"utf-8"));//文字コード
+
+                        while ((strLine = bf.readLine()) != null) {
+                            Log.d("ログ", strLine);
+                        }
+                    }
+                    else {
+                        System.out.println(content.toString());
+                    }
+                }
+                catch (ArrayIndexOutOfBoundsException e) {
+                    System.err.println("引数にURLを指定してください");
+                    System.exit(-1);
+                }
+                catch (IOException e) {
+                    System.err.println(e);
+                    System.exit(-1);
+                }
+                //追加分　ここまで
             }
         });
 
