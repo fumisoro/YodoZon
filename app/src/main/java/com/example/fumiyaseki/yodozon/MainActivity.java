@@ -43,37 +43,13 @@ public class MainActivity extends ActionBarActivity {
 
             public void onClick(View v) {
                 query = editText.getText().toString();
-                varWebView.loadUrl(String.format("http://www.yodobashi.com/ec/category/index.html?cate=&word=%s&gint=\"\"", query));
-                varWebView2.loadUrl(String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", query));
+                String yodobashiUrl = String.format("http://www.yodobashi.com/ec/category/index.html?cate=&word=%s&gint=\"\"", query);
+                String amazonUrl = String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", query);
+                varWebView.loadUrl(yodobashiUrl);
+                varWebView2.loadUrl(amazonUrl);
+                getHtmlSource(yodobashiUrl);
+                getHtmlSource(amazonUrl);
 
-                //追加分　ここから
-                try {
-                    StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
-                    String TagetUrl = String.format("http://www.yodobashi.com/ec/category/index.html?cate=&word=%s&gint=\"\"", query);
-                    String strLine;
-                    URL url = new URL(TagetUrl);
-                    Object content = url.getContent();
-                    if (content instanceof InputStream) {
-                        BufferedReader bf = new BufferedReader(new InputStreamReader
-                                ((InputStream)content,"utf-8"));//文字コード
-
-                        while ((strLine = bf.readLine()) != null) {
-                            Log.d("ログ", strLine);
-                        }
-                    }
-                    else {
-                        System.out.println(content.toString());
-                    }
-                }
-                catch (ArrayIndexOutOfBoundsException e) {
-                    System.err.println("引数にURLを指定してください");
-                    System.exit(-1);
-                }
-                catch (IOException e) {
-                    System.err.println(e);
-                    System.exit(-1);
-                }
-                //追加分　ここまで
             }
         });
 
@@ -100,5 +76,33 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void getHtmlSource(String urlString){
+        try {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
+            String strLine;
+            URL url = new URL(urlString);
+            Object content = url.getContent();
+            if (content instanceof InputStream) {
+                BufferedReader bf = new BufferedReader(new InputStreamReader
+                        ((InputStream)content,"utf-8"));//文字コード
+
+                while ((strLine = bf.readLine()) != null) {
+                    Log.d("ログ", strLine);
+                }
+            }
+            else {
+                System.out.println(content.toString());
+            }
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("引数にURLを指定してください");
+            System.exit(-1);
+        }
+        catch (IOException e) {
+            System.err.println(e);
+            System.exit(-1);
+        }
     }
 }
