@@ -10,6 +10,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -79,30 +82,31 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void getHtmlSource(String urlString){
-        try {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
-            String strLine;
-            URL url = new URL(urlString);
-            Object content = url.getContent();
-            if (content instanceof InputStream) {
-                BufferedReader bf = new BufferedReader(new InputStreamReader
-                        ((InputStream)content,"utf-8"));//文字コード
-
-                while ((strLine = bf.readLine()) != null) {
-                    Log.d("ログ", strLine);
-                }
-            }
-            else {
-                System.out.println(content.toString());
-            }
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("引数にURLを指定してください");
-            System.exit(-1);
-        }
-        catch (IOException e) {
-            System.err.println(e);
-            System.exit(-1);
-        }
+        Document doc = Jsoup.connect("http://www.example.com").get();
+//        try {
+//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
+//            String strLine;
+//            URL url = new URL(urlString);
+//            Object content = url.getContent();
+//            if (content instanceof InputStream) {
+//                BufferedReader bf = new BufferedReader(new InputStreamReader
+//                        ((InputStream)content,"utf-8"));//文字コード
+//
+//                while ((strLine = bf.readLine()) != null) {
+//                    Log.d("ログ", strLine);
+//                }
+//            }
+//            else {
+//                System.out.println(content.toString());
+//            }
+//        }
+//        catch (ArrayIndexOutOfBoundsException e) {
+//            System.err.println("引数にURLを指定してください");
+//            System.exit(-1);
+//        }
+//        catch (IOException e) {
+//            System.err.println(e);
+//            System.exit(-1);
+//        }
     }
 }
