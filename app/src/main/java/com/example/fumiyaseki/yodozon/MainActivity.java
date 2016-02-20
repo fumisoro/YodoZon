@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import java.io.IOException;
+import org.jsoup.Connection;
 import org.jsoup.select.Elements;
 import android.util.Log;
 import java.io.BufferedReader;
@@ -28,9 +30,10 @@ public class MainActivity extends ActionBarActivity {
     private Button button;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         varWebView = (WebView)findViewById(R.id.webView);
         varWebView2 = (WebView)findViewById(R.id.webView2);
@@ -50,8 +53,12 @@ public class MainActivity extends ActionBarActivity {
                 String amazonUrl = String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", query);
                 varWebView.loadUrl(yodobashiUrl);
                 varWebView2.loadUrl(amazonUrl);
-                getHtmlSource(yodobashiUrl);
-                getHtmlSource(amazonUrl);
+                try {
+                    getHtmlSource(yodobashiUrl);
+                    getHtmlSource(amazonUrl);
+                }catch (IOException e) {
+
+                }
 
             }
         });
@@ -81,32 +88,19 @@ public class MainActivity extends ActionBarActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    private void getHtmlSource(String urlString){
-        Document doc = Jsoup.connect("http://www.example.com").get();
-//        try {
-//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
-//            String strLine;
-//            URL url = new URL(urlString);
-//            Object content = url.getContent();
-//            if (content instanceof InputStream) {
-//                BufferedReader bf = new BufferedReader(new InputStreamReader
-//                        ((InputStream)content,"utf-8"));//文字コード
-//
-//                while ((strLine = bf.readLine()) != null) {
-//                    Log.d("ログ", strLine);
-//                }
-//            }
-//            else {
-//                System.out.println(content.toString());
-//            }
-//        }
-//        catch (ArrayIndexOutOfBoundsException e) {
-//            System.err.println("引数にURLを指定してください");
-//            System.exit(-1);
-//        }
-//        catch (IOException e) {
-//            System.err.println(e);
-//            System.exit(-1);
-//        }
+    private void getHtmlSource(String urlString) throws IOException {
+        try {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
+            Document document = Jsoup.connect(urlString).get();
+            Log.d("ログ", document.html());
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("引数にURLを指定してください");
+            System.exit(-1);
+        }
+        catch (IOException e) {
+            System.err.println(e);
+            System.exit(-1);
+        }
     }
 }
