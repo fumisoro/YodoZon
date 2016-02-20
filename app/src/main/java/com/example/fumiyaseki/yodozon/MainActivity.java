@@ -102,7 +102,7 @@ public class MainActivity extends ActionBarActivity {
             Elements title = null;
             try {
                 document = Jsoup.connect(urlString).get();
-                title = document.getElementsByTag("title");
+                title = document.getElementsByTag("body");
             } catch (IOException e) {
                 e.printStackTrace();
             }

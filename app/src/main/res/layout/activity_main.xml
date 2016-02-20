@@ -31,19 +31,31 @@
         android:layout_height="match_parent"
         android:weightSum="1">
 
-        <TextView
-            android:layout_width="191dp"
-            android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/textView"
-            android:layout_gravity="right" />
-
-        <TextView
+        <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/textView2"
-            android:layout_weight="0.94" />
+            android:id="@+id/scrollView" >
+
+            <TextView
+                android:layout_width="191dp"
+                android:layout_height="wrap_content"
+                android:text="New Text"
+                android:id="@+id/textView"
+                android:layout_gravity="right" />
+        </ScrollView>
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/scrollView2" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Text"
+                android:id="@+id/textView2"
+                android:layout_weight="0.94" />
+        </ScrollView>
 
     </LinearLayout>
 
