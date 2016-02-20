@@ -1,6 +1,7 @@
 package com.example.fumiyaseki.yodozon;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -12,9 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import java.io.IOException;
 import org.jsoup.Connection;
 import org.jsoup.select.Elements;
+import org.w3c.dom.Text;
+
 import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,10 +26,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import android.os.StrictMode;
+import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
-    private WebView varWebView, varWebView2;
     private EditText editText;
+    private TextView yodobashiTextView, amazonTextView;
     private String query = "";
     private Button button;
 
@@ -35,12 +40,10 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
 
-        varWebView = (WebView)findViewById(R.id.webView);
-        varWebView2 = (WebView)findViewById(R.id.webView2);
-        varWebView.setWebViewClient(new WebViewClient());
-        varWebView2.setWebViewClient(new WebViewClient());
-        varWebView.getSettings().setJavaScriptEnabled(true);
-        varWebView2.getSettings().setJavaScriptEnabled(true);
+
+        yodobashiTextView = (TextView)findViewById(R.id.textView);
+        amazonTextView = (TextView)findViewById(R.id.textView2);
+
 
         editText = (EditText)findViewById(R.id.editText);
         button = (Button)findViewById(R.id.button);
@@ -51,11 +54,10 @@ public class MainActivity extends ActionBarActivity {
                 query = editText.getText().toString();
                 String yodobashiUrl = String.format("http://www.yodobashi.com/ec/category/index.html?cate=&word=%s&gint=\"\"", query);
                 String amazonUrl = String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", query);
-                varWebView.loadUrl(yodobashiUrl);
-                varWebView2.loadUrl(amazonUrl);
                 try {
-                    getHtmlSource(yodobashiUrl);
-                    getHtmlSource(amazonUrl);
+                    getHtmlSource(yodobashiUrl, yodobashiTextView);
+                    getHtmlSource(amazonUrl, amazonTextView);
+
                 }catch (IOException e) {
 
                 }
@@ -76,31 +78,47 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event){
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && varWebView.canGoBack()){
-            varWebView.goBack();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
+
+    private void getHtmlSource(String urlString, TextView textView) throws IOException {
+        DownloadTask task = new DownloadTask(urlString, textView);
+        task.execute("start");
     }
 
-    private void getHtmlSource(String urlString) throws IOException {
-        try {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
-            Document document = Jsoup.connect(urlString).get();
-            Log.d("ログ", document.html());
+    public class DownloadTask extends AsyncTask<String, Integer, Elements> {
+
+        private String urlString;
+        private TextView textView;
+        private Document document;
+
+        DownloadTask(String urlString, TextView textView){
+            this.urlString = urlString;
+            this.textView = textView;
         }
-        catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("引数にURLを指定してください");
-            System.exit(-1);
+
+        @Override
+        protected Elements doInBackground(String... params) {
+            Elements title = null;
+            try {
+                document = Jsoup.connect(urlString).get();
+                title = document.getElementsByTag("title");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return title;
         }
-        catch (IOException e) {
-            System.err.println(e);
-            System.exit(-1);
+
+        @Override
+        protected void onPostExecute(Elements result) {
+            if (result == null) {
+
+            }
+            else {
+                textView.setText(result.toString());
+            }
         }
+
+
     }
 }
