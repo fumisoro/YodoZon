@@ -122,6 +122,7 @@ public class MainActivity extends ActionBarActivity {
                 for(Element e: result){
                     if(mode == "yodobashi") {
                         list.add(e.select("a.productListPostTag.clicklog.cl-schRlt").toString());
+                        Log.d("デバッグ", "http://www.yodobashi.com/"+e.attr("href"));
                     }
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(listView.getContext(), R.layout.list, list);
