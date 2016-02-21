@@ -37,22 +37,16 @@ import android.widget.ArrayAdapter;
 
 public class MainActivity extends ActionBarActivity {
     private EditText editText;
-    private TextView yodobashiTextView, amazonTextView;
     private String query = "";
     private Button button;
     private ListView listView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        yodobashiTextView = (TextView)findViewById(R.id.textView);
-        amazonTextView = (TextView)findViewById(R.id.textView2);
-
         listView = (ListView)findViewById(R.id.listView);
-
-
 
         editText = (EditText)findViewById(R.id.editText);
         button = (Button)findViewById(R.id.button);
@@ -63,8 +57,8 @@ public class MainActivity extends ActionBarActivity {
                 query = editText.getText().toString();
                 String yodobashiUrl = String.format("http://www.yodobashi.com/ec/category/index.html?cate=&word=%s&gint=\"\"", query);
                 String amazonUrl = String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", query);
-                getHtmlSource(yodobashiUrl, yodobashiTextView, "yodobashi");
-                getHtmlSource(amazonUrl, amazonTextView, "amazon");
+                getHtmlSource(yodobashiUrl, "yodobashi");
+                getHtmlSource(amazonUrl, "amazon");
             }
         });
 
@@ -84,36 +78,38 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    private void getHtmlSource(String urlString, TextView textView, String mode){
+    private void getHtmlSource(String urlString, String mode){
         Log.d("デバッグ", urlString);
-        DownloadTask task = new DownloadTask(urlString, textView, mode);
+        DownloadTask task = new DownloadTask(urlString, mode);
         task.execute("start");
     }
 
     public class DownloadTask extends AsyncTask<String, Integer, Elements> {
 
         private String urlString;
-        private TextView textView;
         private Document document;
         private String mode;
 
-        DownloadTask(String urlString, TextView textView, String mode){
+        DownloadTask(String urlString, String mode){
             super();
             this.urlString = urlString;
-            this.textView = textView;
             this.mode = mode;
         }
 
         @Override
         protected Elements doInBackground(String... params) {
-            Elements title = null;
+            Elements commodities = null;
             try {
                 document = Jsoup.connect(urlString).get();
-                title = document.select("a.productListPostTag.clicklog.cl-schRlt");
+                if (mode == "yodobashi") {
+                    commodities = document.select("a.productListPostTag.clicklog.cl-schRlt");
+                }else if(mode == "amazon"){
+                    commodities = document.select("a.productListPostTag.clicklog.cl-schRlt");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return title;
+            return commodities;
         }
 
         @Override
@@ -122,14 +118,17 @@ public class MainActivity extends ActionBarActivity {
 
             }
             else {
-                ArrayList<String> list = new ArrayList<String>();
+                ArrayList<String> list = new ArrayList<>();
                 for(Element e: result){
-                    list.add(e.toString());
+                    if(mode == "yodobashi") {
+                        list.add(e.select("div.fs14").toString());
+                    }
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(listView.getContext(), R.layout.list, list);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(listView.getContext(), R.layout.list, list);
                 Log.d("デバッグ", list.toString());
-                listView.setAdapter(adapter);
-                textView.setText(result.toString());
+                if (mode == "yodobashi") {
+                    listView.setAdapter(adapter);
+                }
             }
         }
 
