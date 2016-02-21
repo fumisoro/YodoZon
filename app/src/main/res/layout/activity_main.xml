@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
@@ -28,7 +29,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="71dp"
         android:weightSum="1">
 
         <ScrollView
@@ -58,6 +59,13 @@
         </ScrollView>
 
     </LinearLayout>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="296dp"
+        android:id="@+id/listView"
+        android:choiceMode="singleChoice"
+        tools:listitem="@android:layout/simple_expandable_list_item_1" />
 
 
 </LinearLayout>
