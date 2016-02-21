@@ -121,7 +121,7 @@ public class MainActivity extends ActionBarActivity {
                 ArrayList<String> list = new ArrayList<>();
                 for(Element e: result){
                     if(mode == "yodobashi") {
-                        list.add(e.select("div.fs14").toString());
+                        list.add(e.select("a.productListPostTag.clicklog.cl-schRlt").toString());
                     }
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(listView.getContext(), R.layout.list, list);
