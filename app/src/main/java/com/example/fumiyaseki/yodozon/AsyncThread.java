@@ -94,13 +94,8 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
                     }catch (ExecutionException e2){
 
                     }
-
-//                    Log.d("デバッグ", "http://www.yodobashi.com/" + e.attr("href"));
-//                    Bitmap bitmap = getImageBitmap(e.select("img").attr("src").toString());
-//                    Log.d("デバッグ", bitmap.toString());
                 }
             }
-//            ArrayAdapter<String> adapter = new ArrayAdapter<>(listView.getContext(), R.layout.list, list);
 
             if (mode == "yodobashi") {
                 CustomAdapter customAdapter = new CustomAdapter(context, 0, commodityArrayList);
