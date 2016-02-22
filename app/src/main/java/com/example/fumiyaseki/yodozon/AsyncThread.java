@@ -1,13 +1,17 @@
 package com.example.fumiyaseki.yodozon;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,9 +21,14 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by fumiyaseki on 2016/02/22.
@@ -32,12 +41,16 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
     private Document document;
     private  ListView listView;
     private String mode;
+    private LayoutInflater inflater;
+    private Context context;
 
-    DownloadTask(String urlString, ListView listView, String mode, ImageView imageView){
+    DownloadTask(String urlString, ListView listView, String mode, LayoutInflater inflater, Context context){
         super();
         this.urlString = urlString;
         this.listView = listView;
         this.mode = mode;
+        this.inflater = inflater;
+        this.context = context;
     }
 
     @Override
@@ -62,24 +75,55 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
 
         }
         else {
-            ArrayList<String> list = new ArrayList<>();
+            ArrayList<Commodity> commodityArrayList = new ArrayList<>();
+            LinearLayout ll;
+            View v = inflater.inflate(R.layout.list, null);
+
             for(Element e: result){
+
                 if(mode == "yodobashi") {
-                    list.add(e.select("a.productListPostTag.clicklog.cl-schRlt").toString());
+                    ExecutorService executorService = Executors.newFixedThreadPool(4);
+                    GetImageTask getImageTask = new GetImageTask(e.select("img").attr("src"));
+                    Future<Bitmap> response = executorService.submit(getImageTask);
+                    TextView nameTextView = (TextView)v.findViewById(R.id.nameTextView);
+                    try {
+                        Commodity c = new Commodity(100, e.select("div.fs14").select("strong").html(), "http://www.yodobashi.com/" + e.attr("href"), response.get());
+                        Log.d("デバッグ", c.name.toString());
+                        commodityArrayList.add(c);
+                    }catch (InterruptedException e1){
+
+                    }catch (ExecutionException e2){
+
+                    }
+
 //                    Log.d("デバッグ", "http://www.yodobashi.com/" + e.attr("href"));
-                    Bitmap bitmap = getImageBitmap(e.select("img").attr("src").toString());
-
-
-
+//                    Bitmap bitmap = getImageBitmap(e.select("img").attr("src").toString());
+//                    Log.d("デバッグ", bitmap.toString());
                 }
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(listView.getContext(), R.layout.list, list);
-            Log.d("デバッグ", list.toString());
+//            ArrayAdapter<String> adapter = new ArrayAdapter<>(listView.getContext(), R.layout.list, list);
+
             if (mode == "yodobashi") {
-                listView.setAdapter(adapter);
+                CustomAdapter customAdapter = new CustomAdapter(context, 0, commodityArrayList);
+                listView.setAdapter(customAdapter);
             }
         }
     }
+
+}
+
+class GetImageTask implements Callable<Bitmap>{
+    private String url;
+
+    GetImageTask(String url){
+        this.url = url;
+    }
+
+    @Override
+    public Bitmap call(){
+        return getImageBitmap(url);
+    }
+
 
     public Bitmap getImageBitmap(String url){
         Bitmap image = null;
@@ -96,5 +140,5 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
             return image;
         }
     }
-    
 }
+

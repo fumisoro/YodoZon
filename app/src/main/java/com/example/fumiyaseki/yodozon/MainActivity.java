@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -18,12 +19,14 @@ public class MainActivity extends ActionBarActivity {
     private String query = "";
     private Button button;
     private ListView listView;
+    private LayoutInflater inflater;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        inflater = getLayoutInflater();
         listView = (ListView)findViewById(R.id.listView);
 
         editText = (EditText)findViewById(R.id.editText);
@@ -56,7 +59,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void getHtmlSource(String urlString, String mode){
-        DownloadTask task = new DownloadTask(urlString, listView, mode);
+        DownloadTask task = new DownloadTask(urlString, listView, mode, inflater, this);
         task.execute("start");
     }
 
