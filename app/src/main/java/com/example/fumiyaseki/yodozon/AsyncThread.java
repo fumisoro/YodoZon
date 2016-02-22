@@ -85,10 +85,9 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
                     ExecutorService executorService = Executors.newFixedThreadPool(4);
                     GetImageTask getImageTask = new GetImageTask(e.select("img").attr("src"));
                     Future<Bitmap> response = executorService.submit(getImageTask);
-                    TextView nameTextView = (TextView)v.findViewById(R.id.nameTextView);
                     try {
-                        Commodity c = new Commodity(100, e.select("div.fs14").select("strong").html(), "http://www.yodobashi.com/" + e.attr("href"), response.get());
-                        Log.d("デバッグ", c.name.toString());
+                        Commodity c = new Commodity(e.select("strong.red").html(), e.select("div.fs14").select("strong").html(), "http://www.yodobashi.com/" + e.attr("href"), response.get());
+                        Log.d("デバッグ", e.select("strong.red").toString());
                         commodityArrayList.add(c);
                     }catch (InterruptedException e1){
 

@@ -17,12 +17,12 @@ import java.util.List;
  * Created by fumiyaseki on 2016/02/21.
  */
 public class Commodity {
-    public int price;
+    public String price;
     public String name;
     public String url;
     public Bitmap image;
 
-    Commodity(int price, String name, String url, Bitmap image){
+    Commodity(String price, String name, String url, Bitmap image){
         this.price = price;
         this.name = name;
         this.url = url;
@@ -52,6 +52,10 @@ class CustomAdapter extends ArrayAdapter<Commodity>{
         TextView nameTextView;
         nameTextView = (TextView)convertView.findViewById(R.id.nameTextView);
         nameTextView.setText(item.name);
+
+        TextView priceTextView;
+        priceTextView = (TextView)convertView.findViewById(R.id.priceTextView);
+        priceTextView.setText(item.price);
 
         return convertView;
     }
