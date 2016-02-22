@@ -20,12 +20,24 @@ public class Commodity {
     public String name;
     public String url;
     public Bitmap image;
+    public int priceInt;
+    public String point;
+    public int pointInt;
 
-    Commodity(String price, String name, String url, Bitmap image){
+    Commodity(String price, String name, String url, Bitmap image, String point){
         this.price = price;
         this.name = name;
         this.url = url;
         this.image = image;
+        this.priceInt = convertInt(price);
+        this.point = point;
+        this.pointInt = convertInt(point);
+    }
+
+    int convertInt(String priceText){
+        String regex = "\\D";
+        priceText = priceText.replaceAll(regex, "");
+        return Integer.parseInt(priceText);
     }
 }
 
@@ -55,6 +67,10 @@ class CustomAdapter extends ArrayAdapter<Commodity>{
         TextView priceTextView;
         priceTextView = (TextView)convertView.findViewById(R.id.priceTextView);
         priceTextView.setText(item.price);
+
+        TextView pointTextView;
+        pointTextView = (TextView)convertView.findViewById(R.id.pointTextView);
+        pointTextView.setText(item.point);
 
         return convertView;
     }
