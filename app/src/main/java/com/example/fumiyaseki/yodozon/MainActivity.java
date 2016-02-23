@@ -1,6 +1,7 @@
 package com.example.fumiyaseki.yodozon;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +15,17 @@ import android.widget.EditText;
 
 import android.widget.ListView;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 public class MainActivity extends AppCompatActivity {
     private EditText editText;
     private String query = "";
@@ -26,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        inflater = getLayoutInflater();
         listView = (ListView)findViewById(R.id.listView);
 
         editText = (EditText)findViewById(R.id.editText);
@@ -37,9 +48,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 query = editText.getText().toString();
                 String yodobashiUrl = String.format("http://www.yodobashi.com/ec/category/index.html?cate=&word=%s&gint=\"\"", query);
-                String amazonUrl = String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", query);
                 getHtmlSource(yodobashiUrl, "yodobashi");
-                getHtmlSource(amazonUrl, "amazon");
             }
         });
 
@@ -59,13 +68,45 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("デバッグ", "でばっぐ");
+                ListView listView = (ListView) parent;
+                final Commodity c = (Commodity) listView.getItemAtPosition(position);
+                String amazonUrl = String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", c.name);
+//                ExecutorService executorService = Executors.newFixedThreadPool(1);
+//                GetCommodityInfoTask getCommodityInfoTask  = new GetCommodityInfoTask(c.name);
+//                Future<Commodity> response = executorService.submit(getCommodityInfoTask);
+                (new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Document document = null;
+                        String amazonUrl = String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", c.name);
+                        try {
+                            document = Jsoup.connect(amazonUrl).get();
+                        }catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Element e = document.select("li.s-result-item.celwidget").first();
+                        String price = e.select("span.a-size-base.a-color-price.s-price.a-text-bold").html();
+                        String name = e.select("h2.a-size-base.a-color-null.s-inline.s-access-title.a-text-normal").html();
+                        String url = e.select("a.a-link-normal.s-access-detail-page.a-text-normal").attr("href");
+                        Commodity c = new Commodity(price, name, url);
+                        Log.d("デバッグ", price);
+                        Log.d("デバッグ", name);
+                        Log.d("デバッグ", url);
+                    }
+                })).start();
+//                try{
+//                    Log.d("デバッグ", response.get().toString());
+//                }catch (InterruptedException e1){
+//
+//                }catch (ExecutionException e2){
+//
+//                }
             }
         });
     }
 
     private void getHtmlSource(String urlString, String mode){
-        DownloadTask task = new DownloadTask(urlString, listView, mode, inflater, this);
+        DownloadTask task = new DownloadTask(urlString, listView, mode, this);
         task.execute("start");
     }
 

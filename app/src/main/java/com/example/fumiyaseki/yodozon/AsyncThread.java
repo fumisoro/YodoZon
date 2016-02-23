@@ -1,6 +1,7 @@
 package com.example.fumiyaseki.yodozon;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -41,17 +42,15 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
 
     private String urlString;
     private Document document;
-    private  ListView listView;
+    private ListView listView;
     private String mode;
-    private LayoutInflater inflater;
     private Context context;
 
-    DownloadTask(String urlString, ListView listView, String mode, LayoutInflater inflater, Context context){
+    DownloadTask(String urlString, ListView listView, String mode, Context context){
         super();
         this.urlString = urlString;
         this.listView = listView;
         this.mode = mode;
-        this.inflater = inflater;
         this.context = context;
     }
 
@@ -63,7 +62,7 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
             if (mode == "yodobashi") {
                 commodities = document.select("a.productListPostTag.clicklog.cl-schRlt");
             }else if(mode == "amazon"){
-                commodities = document.select("a.productListPostTag.clicklog.cl-schRlt");
+                commodities = document.select("a.a-spacing-none.a-link-normal.sx-table-product.aw-search-results");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,16 +81,16 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
             for(Element e: result){
 
                 if(mode == "yodobashi") {
-                    ExecutorService executorService = Executors.newFixedThreadPool(4);
+                    ExecutorService executorService = Executors.newFixedThreadPool(1);
                     GetImageTask getImageTask = new GetImageTask(e.select("img").attr("src"));
                     Future<Bitmap> response = executorService.submit(getImageTask);
-                    String priceText = e.select("strong.red").html();
-                    String regex = "\\D";
-                    priceText = priceText.replaceAll(regex, "");
-                    Log.d("デバッグ", priceText);
                     try {
-                        Commodity c = new Commodity(e.select("strong.red").html(), e.select("div.fs14").select("strong").html(), "http://www.yodobashi.com/" + e.attr("href"), response.get(), e.select("strong.orange.ml10").html());
-                        Log.d("デバッグ", e.select("strong.red").toString());
+                        String price = e.select("strong.red").html();
+                        String name = e.select("div.fs14").select("strong").html();
+                        String url = "http://www.yodobashi.com/" + e.attr("href");
+                        Bitmap image = response.get();
+                        String point = e.select("strong.orange.ml10").html();
+                        Commodity c = new Commodity(price, name, url, image, point);
                         commodityArrayList.add(c);
                     }catch (InterruptedException e1){
 
@@ -137,6 +136,34 @@ class GetImageTask implements Callable<Bitmap>{
             e2.printStackTrace();
             return image;
         }
+    }
+}
+
+class GetCommodityInfoTask implements Callable<Commodity>{
+    private String name;
+    GetCommodityInfoTask(String name){
+        this.name = name;
+    }
+
+    @Override
+    public Commodity call(){
+        return getCommodityInfo();
+    }
+
+    public Commodity getCommodityInfo() {
+        Document document = null;
+        String amazonUrl = String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", name);
+        try {
+            document = Jsoup.connect(amazonUrl).get();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        Element e = document.select("div.sx-table-item").first();
+        String price = e.select("span.a-size-small.a-color-price.a-text-bold").html();
+        String name = e.select("h5.a-size-base.a-color-base.sx-title a-text-normal").select("strong").html();
+        String url = "http://www.amazon.co.jp/"+e.select("a.a-spacing-none.a-link-normal.sx-table-product.aw-search-results").attr("href");
+        Commodity c = new Commodity(price, name, url);
+        return c;
     }
 }
 

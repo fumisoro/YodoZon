@@ -34,6 +34,16 @@ public class Commodity {
         this.pointInt = convertInt(point);
     }
 
+    Commodity(String price, String name, String url){
+        this.price = price;
+        this.name = name;
+        this.url = url;
+        this.image = null;
+        this.priceInt = convertInt(price);
+        this.point = null;
+        this.pointInt = 0;
+    }
+
     int convertInt(String text){
         String regex = "\\D";
         text = text.replaceAll(regex, "");
@@ -51,7 +61,7 @@ class CustomAdapter extends ArrayAdapter<Commodity>{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
-        Commodity item = (Commodity)getItem(position);
+        Commodity item = getItem(position);
 
         if(null == convertView){
             convertView = inflater.inflate(R.layout.list, null);
