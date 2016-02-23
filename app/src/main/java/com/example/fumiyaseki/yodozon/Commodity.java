@@ -34,10 +34,10 @@ public class Commodity {
         this.pointInt = convertInt(point);
     }
 
-    int convertInt(String priceText){
+    int convertInt(String text){
         String regex = "\\D";
-        priceText = priceText.replaceAll(regex, "");
-        return Integer.parseInt(priceText);
+        text = text.replaceAll(regex, "");
+        return Integer.parseInt(text);
     }
 }
 

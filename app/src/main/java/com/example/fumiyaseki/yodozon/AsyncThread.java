@@ -7,11 +7,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -76,8 +78,6 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
         }
         else {
             ArrayList<Commodity> commodityArrayList = new ArrayList<>();
-            LinearLayout ll;
-            View v = inflater.inflate(R.layout.list, null);
 
             for(Element e: result){
 

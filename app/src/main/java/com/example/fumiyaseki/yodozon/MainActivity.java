@@ -1,18 +1,20 @@
 package com.example.fumiyaseki.yodozon;
 
 import android.content.Context;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 
 import android.widget.ListView;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
     private EditText editText;
     private String query = "";
     private Button button;
@@ -44,7 +46,7 @@ public class MainActivity extends ActionBarActivity {
         editText.setOnKeyListener(new View.OnKeyListener() {
 
             @Override
-            public boolean onKey(View v, int actionId, KeyEvent event){
+            public boolean onKey(View v, int actionId, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && actionId == KeyEvent.KEYCODE_ENTER) {
                     InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
@@ -54,6 +56,12 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("デバッグ", "でばっぐ");
+            }
+        });
     }
 
     private void getHtmlSource(String urlString, String mode){
