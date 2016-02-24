@@ -1,6 +1,7 @@
 package com.example.fumiyaseki.yodozon;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

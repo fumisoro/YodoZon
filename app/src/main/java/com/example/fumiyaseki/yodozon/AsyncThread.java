@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jdeferred.Deferred;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -86,13 +88,17 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
                     Future<Bitmap> response = executorService.submit(getImageTask);
                     try {
                         String price = e.select("strong.red").html();
-                        String name = e.select("div.fs14").select("strong").html();
+                        final String name = e.select("div.fs14").select("strong").html();
                         String url = "http://www.yodobashi.com/" + e.attr("href");
                         Bitmap image = response.get();
                         String point = e.select("strong.orange.ml10").html();
+                        ExecutorService executionExceptionAmazon = Executors.newFixedThreadPool(1);
+                        GetCommodityInfoTask getCommodityInfoTask = new GetCommodityInfoTask(name);
+                        Future<Commodity> res = executionExceptionAmazon.submit(getCommodityInfoTask);
                         Commodity c = new Commodity(price, name, url, image, point);
                         commodityArrayList.add(c);
                     }catch (InterruptedException e1){
+
 
                     }catch (ExecutionException e2){
 

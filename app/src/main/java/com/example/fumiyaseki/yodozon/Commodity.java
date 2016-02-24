@@ -16,30 +16,36 @@ import java.util.List;
  * Created by fumiyaseki on 2016/02/21.
  */
 public class Commodity {
-    public String price;
+    public String yodobashiPrice;
     public String name;
     public String url;
     public Bitmap image;
-    public int priceInt;
+    public int yodobashiPriceInt;
     public String point;
     public int pointInt;
+    public String amazonPrice;
 
-    Commodity(String price, String name, String url, Bitmap image, String point){
-        this.price = price;
+    Commodity(String yodobashiPrice, String amazonPrice, String name, String url, Bitmap image, String point){
+        Commodity c = new Commodity(yodobashiPrice, name, url, image, point);
+        c.amazonPrice = amazonPrice;
+    }
+
+    Commodity(String yodobashiPrice, String name, String url, Bitmap image, String point){
+        this.yodobashiPrice = yodobashiPrice;
         this.name = name;
         this.url = url;
         this.image = image;
-        this.priceInt = convertInt(price);
+        this.yodobashiPriceInt = convertInt(yodobashiPrice);
         this.point = point;
         this.pointInt = convertInt(point);
     }
 
-    Commodity(String price, String name, String url){
-        this.price = price;
+    Commodity(String yodobashiPrice, String name, String url){
+        this.yodobashiPrice = yodobashiPrice;
         this.name = name;
         this.url = url;
         this.image = null;
-        this.priceInt = convertInt(price);
+        this.yodobashiPriceInt = convertInt(yodobashiPrice);
         this.point = null;
         this.pointInt = 0;
     }
@@ -74,13 +80,17 @@ class CustomAdapter extends ArrayAdapter<Commodity>{
         nameTextView = (TextView)convertView.findViewById(R.id.nameTextView);
         nameTextView.setText(item.name);
 
-        TextView priceTextView;
-        priceTextView = (TextView)convertView.findViewById(R.id.priceTextView);
-        priceTextView.setText(item.price);
+        TextView yodobashiPriceTextView;
+        yodobashiPriceTextView = (TextView)convertView.findViewById(R.id.yodobashiPriceTextView);
+        yodobashiPriceTextView.setText(item.yodobashiPrice);
 
         TextView pointTextView;
         pointTextView = (TextView)convertView.findViewById(R.id.pointTextView);
         pointTextView.setText(item.point);
+
+        TextView amazonPriceTextView;
+        amazonPriceTextView = (TextView)convertView.findViewById(R.id.amazonPriceTextView);
+        amazonPriceTextView.setText(item.amazonPrice);
 
         return convertView;
     }

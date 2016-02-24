@@ -25,12 +25,17 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/priceTextView" />
+            android:id="@+id/yodobashiPriceTextView" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/pointTextView" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/amazonPriceTextView" />
     </LinearLayout>
 
 </LinearLayout>
