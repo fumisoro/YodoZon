@@ -23,8 +23,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile files('libs/httpcore-4.4.4.jar')
-    compile files('libs/httpmime-4.5.1.jar')
-    compile files('libs/jsoup-1.8.3.jar')
-    compile files('libs/jdeferred-core-1.2.4.jar')
+    compile 'org.jdeferred:jdeferred-core:1.2.4@jar'
+    compile 'org.jdeferred:jdeferred-android-aar:1.2.4@aar'
+    compile 'org.jsoup:jsoup:1.8.3'
 }
