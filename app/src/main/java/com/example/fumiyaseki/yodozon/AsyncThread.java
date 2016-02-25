@@ -17,7 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jdeferred.Deferred;
+import org.jdeferred.DeferredFutureTask;
+import org.jdeferred.DoneCallback;
+import org.jdeferred.Promise;
+import org.jdeferred.DonePipe;
+import org.jdeferred.android.AndroidDeferredManager;
 
+import org.jdeferred.android.AndroidDeferredObject;
+import org.jdeferred.android.DeferredAsyncTask;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -47,6 +54,45 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
     private ListView listView;
     private String mode;
     private Context context;
+    private AndroidDeferredManager mAdm;
+    private Elements yodobashiCommoditiesHtml;
+
+
+    private Promise<Bitmap, Throwable, Void> getImageFromUrl(final String imageUrlString) {
+        return mAdm.when(new DeferredAsyncTask<Void, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackgroundSafe(final Void... params) throws Exception {
+                URL imageUrl = new URL(imageUrlString);
+                HttpURLConnection connection = (HttpURLConnection) imageUrl.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap image = BitmapFactory.decodeStream(input);
+                return image;
+            }
+        });
+    }
+
+    private Promise<ArrayList, Throwable, Void> getYodobashiCommodityArray(final Elements elements){
+        return mAdm.when(new DeferredAsyncTask<Void, Void, ArrayList>() {
+            ArrayList<Commodity> commodityArrayList = new ArrayList<>();
+            @Override
+            protected ArrayList doInBackgroundSafe(final Void... params) throws Exception {
+                for(final Element e: elements) {
+                    String price = e.select("strong.red").html();
+                    final String name = e.select("div.fs14").select("strong").html();
+                    String url = "http://www.yodobashi.com/" + e.attr("href");
+                    String point = e.select("strong.orange.ml10").html();
+                    ExecutorService executorService = Executors.newSingleThreadExecutor();
+                    GetImageTask task = new GetImageTask(e.select("img").attr("src"));
+                    Future<Bitmap> response = executorService.submit(task);
+                    Bitmap image = response.get();
+                    commodityArrayList.add(new Commodity(price, name, url, image, point));
+                }
+                return commodityArrayList;
+            }
+        });
+    }
 
     DownloadTask(String urlString, ListView listView, String mode, Context context){
         super();
@@ -78,37 +124,19 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
 
         }
         else {
-            ArrayList<Commodity> commodityArrayList = new ArrayList<>();
-
-            for(Element e: result){
-
-                if(mode == "yodobashi") {
-                    ExecutorService executorService = Executors.newFixedThreadPool(1);
-                    GetImageTask getImageTask = new GetImageTask(e.select("img").attr("src"));
-                    Future<Bitmap> response = executorService.submit(getImageTask);
-                    try {
-                        String price = e.select("strong.red").html();
-                        final String name = e.select("div.fs14").select("strong").html();
-                        String url = "http://www.yodobashi.com/" + e.attr("href");
-                        Bitmap image = response.get();
-                        String point = e.select("strong.orange.ml10").html();
-                        ExecutorService executionExceptionAmazon = Executors.newFixedThreadPool(1);
-                        GetCommodityInfoTask getCommodityInfoTask = new GetCommodityInfoTask(name);
-                        Future<Commodity> res = executionExceptionAmazon.submit(getCommodityInfoTask);
-                        Commodity c = new Commodity(price, name, url, image, point);
-                        commodityArrayList.add(c);
-                    }catch (InterruptedException e1){
-
-
-                    }catch (ExecutionException e2){
-
+            if(mode == "yodobashi") {
+                mAdm.when(getYodobashiCommodityArray(result)).then(new DoneCallback<ArrayList>() {
+                    @Override
+                    public void onDone(ArrayList result) {
+                        CustomAdapter customAdapter = new CustomAdapter(context, 0, result);
+                        listView.setAdapter(customAdapter);
                     }
-                }
+                });
+
             }
 
             if (mode == "yodobashi") {
-                CustomAdapter customAdapter = new CustomAdapter(context, 0, commodityArrayList);
-                listView.setAdapter(customAdapter);
+
             }
         }
     }

@@ -1,2 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
+
+    <item
+        jar="/Users/fumiyaseki/.gradle/caches/modules-2/files-2.1/org.jdeferred/jdeferred-core/1.2.4/8099d270647d1bc2eca30df57738cf8c05f8c524/jdeferred-core-1.2.4.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8099d270647d1bc2eca30df57738cf8c05f8c524">
+        <dex dex="/Users/fumiyaseki/AndroidStudioProjects/YodoZon/app/build/intermediates/pre-dexed/debug/jdeferred-core-1.2.4_7f141ed611df00bd063685b667ffdc53c2375edf.jar" />
+    </item>
+    <item
+        jar="/Users/fumiyaseki/AndroidStudioProjects/YodoZon/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/jars/libs/internal_impl-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
+        <dex dex="/Users/fumiyaseki/AndroidStudioProjects/YodoZon/app/build/intermediates/pre-dexed/debug/internal_impl-23.1.1_357895a91466e9769c139942cf52bfb7e544d91a.jar" />
+    </item>
+    <item
+        jar="/Users/fumiyaseki/AndroidStudioProjects/YodoZon/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="6cbc7773921fcfedbe55657578f0cbfe614778dc">
+        <dex dex="/Users/fumiyaseki/AndroidStudioProjects/YodoZon/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-23.1.1_cc8a54162f66ff97d50e4055831e208ec6638e54.jar" />
+    </item>
+    <item
+        jar="/Users/fumiyaseki/.gradle/caches/modules-2/files-2.1/org.jsoup/jsoup/1.8.3/65fd012581ded67bc20945d85c32b4598c3a9cf1/jsoup-1.8.3.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="65fd012581ded67bc20945d85c32b4598c3a9cf1">
+        <dex dex="/Users/fumiyaseki/AndroidStudioProjects/YodoZon/app/build/intermediates/pre-dexed/debug/jsoup-1.8.3_b6aeea1d3074a5145127ed6cd7044cbc015d6836.jar" />
+    </item>
+    <item
+        jar="/Users/fumiyaseki/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.1/support-annotations-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
+        <dex dex="/Users/fumiyaseki/AndroidStudioProjects/YodoZon/app/build/intermediates/pre-dexed/debug/support-annotations-23.1.1_7adc9328930ed2db155e6901e8ef73ea8c445ada.jar" />
+    </item>
+    <item
+        jar="/Users/fumiyaseki/AndroidStudioProjects/YodoZon/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="5c5699834e9722f1c288fea2de82725d078ba127">
+        <dex dex="/Users/fumiyaseki/AndroidStudioProjects/YodoZon/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-23.1.1_b0f46b7892d45b4a6d6b095a4f3ee62782679a49.jar" />
+    </item>
+    <item
+        jar="/Users/fumiyaseki/AndroidStudioProjects/YodoZon/app/build/intermediates/exploded-aar/org.jdeferred/jdeferred-android-aar/1.2.4/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="d1b1184f71b541cafdfc46acc93986fc1bf9b440">
+        <dex dex="/Users/fumiyaseki/AndroidStudioProjects/YodoZon/app/build/intermediates/pre-dexed/debug/org.jdeferred-jdeferred-android-aar-1.2.4_8d3f7d0a9b80e9deee26596b2d1fb78e9df39f01.jar" />
+    </item>
+
+</items>
