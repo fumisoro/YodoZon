@@ -69,32 +69,18 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("デバッグ", "クリックされた");
                 ListView listView = (ListView) parent;
                 final Commodity c = (Commodity) listView.getItemAtPosition(position);
-                String amazonUrl = String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", c.name);
+                String regex = "\\[(.+)?\\]";
+                c.name = c.name.replaceAll(regex, "");
+                regex = " ";
+                c.name = c.name.replaceAll(regex, "+");
+                String amazonUrl = String.format("http://www.amazon.co.jp/s/ref=sr_gnr_fkmr0?keywords=%s", c.name);
 //                ExecutorService executorService = Executors.newFixedThreadPool(1);
 //                GetCommodityInfoTask getCommodityInfoTask  = new GetCommodityInfoTask(c.name);
 //                Future<Commodity> response = executorService.submit(getCommodityInfoTask);
-                (new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Document document = null;
-                        String amazonUrl = String.format("http://www.amazon.co.jp/s?url=search-alias=aps&field-keywords=%s", c.name);
-                        try {
-                            document = Jsoup.connect(amazonUrl).get();
-                        }catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Element e = document.select("li.s-result-item.celwidget").first();
-                        String price = e.select("span.a-size-base.a-color-price.s-price.a-text-bold").html();
-                        String name = e.select("h2.a-size-base.a-color-null.s-inline.s-access-title.a-text-normal").html();
-                        String url = e.select("a.a-link-normal.s-access-detail-page.a-text-normal").attr("href");
-                        Commodity c = new Commodity(price, name, url);
-                        Log.d("デバッグ", price);
-                        Log.d("デバッグ", name);
-                        Log.d("デバッグ", url);
-                    }
-                })).start();
+                getHtmlSource(amazonUrl, "amazon");
 //                try{
 //                    Log.d("デバッグ", response.get().toString());
 //                }catch (InterruptedException e1){
