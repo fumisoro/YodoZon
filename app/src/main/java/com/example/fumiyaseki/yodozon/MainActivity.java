@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private String query = "";
     private Button button;
     private ListView listView;
-    private LayoutInflater inflater;
+    private String mode = "yodobashi";
 
 
     @Override
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 query = editText.getText().toString();
                 String yodobashiUrl = String.format("http://www.yodobashi.com/ec/category/index.html?cate=&word=%s&gint=\"\"", query);
-                getHtmlSource(yodobashiUrl, "yodobashi");
+                getHtmlSource(yodobashiUrl, mode);
             }
         });
 
@@ -77,10 +77,17 @@ public class MainActivity extends AppCompatActivity {
                 regex = " ";
                 c.name = c.name.replaceAll(regex, "+");
                 String amazonUrl = String.format("http://www.amazon.co.jp/s/ref=sr_gnr_fkmr0?keywords=%s", c.name);
+                String yodobashiUrl = String.format("http://www.yodobashi.com/ec/category/index.html?cate=&word=%s&gint=\"\"", c.name);
 //                ExecutorService executorService = Executors.newFixedThreadPool(1);
 //                GetCommodityInfoTask getCommodityInfoTask  = new GetCommodityInfoTask(c.name);
 //                Future<Commodity> response = executorService.submit(getCommodityInfoTask);
-                getHtmlSource(amazonUrl, "amazon");
+                if (mode == "yodobashi") {
+                    mode = "amazon";
+                    getHtmlSource(amazonUrl, mode);
+                } else if (mode == "amazon"){
+                    mode = "yodobashi";
+                    getHtmlSource(yodobashiUrl, mode);
+                }
 //                try{
 //                    Log.d("デバッグ", response.get().toString());
 //                }catch (InterruptedException e1){
