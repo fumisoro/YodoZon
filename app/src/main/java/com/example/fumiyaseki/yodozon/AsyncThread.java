@@ -32,7 +32,7 @@ import java.util.concurrent.Future;
  */
 
 
-class DownloadTask extends AsyncTask<String, Integer, Elements> implements OnCancelListener {
+class DownloadTask extends AsyncTask<String, Integer, CustomAdapter> implements OnCancelListener {
 
     private String urlString;
     private Document document;
@@ -63,12 +63,12 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> implements OnCan
     }
 
     @Override
-    protected Elements doInBackground(String... params) {
+    protected CustomAdapter doInBackground(String... params) {
         Elements commodities = null;
         try {
-            publishProgress(50);
+            publishProgress(10);
             document = Jsoup.connect(urlString).get();
-            publishProgress(100);
+            publishProgress(20);
             if (mode == "yodobashi") {
                 commodities = document.select("a.productListPostTag.clicklog.cl-schRlt");
             }else if(mode == "amazon"){
@@ -77,37 +77,14 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> implements OnCan
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return commodities;
-    }
-
-    @Override
-    protected void onProgressUpdate(Integer... values) {
-        Log.d("デバッグ", "onProgressUpdate - " + values[0]);
-        dialog.setProgress(values[0]);
-    }
-
-    @Override
-    protected void onCancelled() {
-        Log.d("デバッグ", "onCancelled");
-        dialog.dismiss();
-    }
-
-    @Override public void onCancel(DialogInterface dialog) {
-        Log.d("デバッグ", "Dialog onCancell... calling cancel(true)");
-        this.cancel(true);
-    }
-
-
-
-    @Override
-    protected void onPostExecute(Elements result) {
-        if (result == null) {
+        if (commodities == null) {
 
         }
         else {
             ArrayList<Commodity> commodityArrayList = new ArrayList<>();
 
-            for(Element e: result){
+            for(Element e: commodities){
+                publishProgress(60);
                 if(mode == "yodobashi") {
                     ExecutorService executorService = Executors.newFixedThreadPool(1);
                     GetImageTask getImageTask = new GetImageTask(e.select("img").attr("src"));
@@ -146,10 +123,36 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> implements OnCan
                     }
                 }
             }
+            publishProgress(100);
             CustomAdapter customAdapter = new CustomAdapter(context, 0, commodityArrayList);
-            listView.setAdapter(customAdapter);
+            dialog.dismiss();
+            return customAdapter;
         }
+        return null;
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        Log.d("デバッグ", "onProgressUpdate - " + values[0]);
+        dialog.setProgress(values[0]);
+    }
+
+    @Override
+    protected void onCancelled() {
+        Log.d("デバッグ", "onCancelled");
         dialog.dismiss();
+    }
+
+    @Override public void onCancel(DialogInterface dialog) {
+        Log.d("デバッグ", "Dialog onCancell... calling cancel(true)");
+        this.cancel(true);
+    }
+
+
+
+    @Override
+    protected void onPostExecute(CustomAdapter customAdapter) {
+        listView.setAdapter(customAdapter);
     }
 
 }
