@@ -66,7 +66,9 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> implements OnCan
     protected Elements doInBackground(String... params) {
         Elements commodities = null;
         try {
+            publishProgress(50);
             document = Jsoup.connect(urlString).get();
+            publishProgress(100);
             if (mode == "yodobashi") {
                 commodities = document.select("a.productListPostTag.clicklog.cl-schRlt");
             }else if(mode == "amazon"){
