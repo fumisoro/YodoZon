@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 public class MainActivity extends AppCompatActivity {
     private EditText editText;
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private Button button;
     private ListView listView;
     private String mode = "yodobashi";
+    private ProgressBar progressBar;
 
 
     @Override

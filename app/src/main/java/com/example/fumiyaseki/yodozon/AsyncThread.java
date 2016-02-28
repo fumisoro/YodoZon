@@ -1,11 +1,15 @@
 package com.example.fumiyaseki.yodozon;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,13 +32,14 @@ import java.util.concurrent.Future;
  */
 
 
-class DownloadTask extends AsyncTask<String, Integer, Elements> {
+class DownloadTask extends AsyncTask<String, Integer, Elements> implements OnCancelListener {
 
     private String urlString;
     private Document document;
     private ListView listView;
     private String mode;
     private Context context;
+    private ProgressDialog dialog;
 
     DownloadTask(String urlString, ListView listView, String mode, Context context){
         super();
@@ -42,6 +47,19 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
         this.listView = listView;
         this.mode = mode;
         this.context = context;
+    }
+
+    @Override
+    protected void onPreExecute(){
+        dialog = new ProgressDialog(context);
+        dialog.setTitle("Please wait");
+        dialog.setMessage("Loading data...");
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setCancelable(true);
+        dialog.setOnCancelListener(this);
+        dialog.setMax(100);
+        dialog.setProgress(0);
+        dialog.show();
     }
 
     @Override
@@ -61,7 +79,27 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> {
     }
 
     @Override
+    protected void onProgressUpdate(Integer... values) {
+        Log.d("デバッグ", "onProgressUpdate - " + values[0]);
+        dialog.setProgress(values[0]);
+    }
+
+    @Override
+    protected void onCancelled() {
+        Log.d("デバッグ", "onCancelled");
+        dialog.dismiss();
+    }
+
+    @Override public void onCancel(DialogInterface dialog) {
+        Log.d("デバッグ", "Dialog onCancell... calling cancel(true)");
+        this.cancel(true);
+    }
+
+
+
+    @Override
     protected void onPostExecute(Elements result) {
+        dialog.dismiss();
         if (result == null) {
 
         }
