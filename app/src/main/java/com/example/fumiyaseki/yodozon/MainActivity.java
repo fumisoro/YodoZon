@@ -1,31 +1,16 @@
 package com.example.fumiyaseki.yodozon;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-
 import android.widget.ListView;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class MainActivity extends AppCompatActivity {
     private EditText editText;
@@ -78,9 +63,6 @@ public class MainActivity extends AppCompatActivity {
                 c.name = c.name.replaceAll(regex, "+");
                 String amazonUrl = String.format("http://www.amazon.co.jp/s/ref=sr_gnr_fkmr0?keywords=%s", c.name);
                 String yodobashiUrl = String.format("http://www.yodobashi.com/ec/category/index.html?cate=&word=%s&gint=\"\"", c.name);
-//                ExecutorService executorService = Executors.newFixedThreadPool(1);
-//                GetCommodityInfoTask getCommodityInfoTask  = new GetCommodityInfoTask(c.name);
-//                Future<Commodity> response = executorService.submit(getCommodityInfoTask);
                 if (mode == "yodobashi") {
                     mode = "amazon";
                     getHtmlSource(amazonUrl, mode);
@@ -88,13 +70,6 @@ public class MainActivity extends AppCompatActivity {
                     mode = "yodobashi";
                     getHtmlSource(yodobashiUrl, mode);
                 }
-//                try{
-//                    Log.d("デバッグ", response.get().toString());
-//                }catch (InterruptedException e1){
-//
-//                }catch (ExecutionException e2){
-//
-//                }
             }
         });
     }
@@ -103,6 +78,5 @@ public class MainActivity extends AppCompatActivity {
         DownloadTask task = new DownloadTask(urlString, listView, mode, this);
         task.execute("start");
     }
-
 
 }
