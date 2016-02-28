@@ -99,7 +99,6 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> implements OnCan
 
     @Override
     protected void onPostExecute(Elements result) {
-        dialog.dismiss();
         if (result == null) {
 
         }
@@ -148,6 +147,7 @@ class DownloadTask extends AsyncTask<String, Integer, Elements> implements OnCan
             CustomAdapter customAdapter = new CustomAdapter(context, 0, commodityArrayList);
             listView.setAdapter(customAdapter);
         }
+        dialog.dismiss();
     }
 
 }
